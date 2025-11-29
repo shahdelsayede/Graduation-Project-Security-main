@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDOR Scan Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="tool-header">
+            <a href="{{ url_for('tool_page', vulnerability_id='idor_scanner') }}" class="back-button">&larr; Scan Again</a>
+            <h1>IDOR Scan Results for:</h1>
+            <p style="word-wrap: break-word;"><em>{{ template }}</em></p>
+        </header>
+
+        <main class="tool-container">
+            {% for item in results %}
+                <div class="results-box">
+                    <p><strong>ID: {{ item.id }}</strong> (URL: {{ item.url }})</p>
+                    <hr style="border-color: #333;">
+                    
+                    {% if item.error %}
+                        <p style="color: #ff4d4d;">Error: {{ item.error }}</p>
+                    {% elif item.info == 'baseline' %}
+                        <p style="color: #8affd1;">&rarr; This is the baseline for comparison.</p>
+                        <p>Status: {{ item.status }}, Length: {{ item.length }}</p>
+                    {% else %}
+                        <p>Status: {{ item.status }}, Length: {{ item.length }}, Similarity: {{ item.similarity_with_baseline }}</p>
+                        {% if item.potential_idor %}
+                            <p style="color: #ff4d4d;">&rarr; POTENTIAL IDOR: Response differs from baseline!</p>
+                        {% else %}
+                            <p style="color: #00ff9b;">&rarr; OK: Response is similar to baseline.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </main>
+
+        <footer>
+            <p>Graduation Project &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

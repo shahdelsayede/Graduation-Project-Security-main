@@ -1,0 +1,218 @@
+/* =========================================
+   1. DASHBOARD & GENERAL STYLES
+   ========================================= */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Roboto Mono', monospace;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Ensure links don't look like default blue links */
+a {
+    color: #00ff9b;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #00ff9b;
+    padding-bottom: 1.5rem;
+}
+
+header h1 {
+    color: #00ff9b;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Grid for Vulnerability Cards */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* Card Styling */
+.card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 255, 155, 0.1);
+}
+
+.card h2 {
+    color: #00ff9b;
+    margin-top: 0;
+}
+
+.card p {
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+}
+
+/* Button Styling */
+.button {
+    display: inline-block;
+    background-color: #00ff9b;
+    color: #121212;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #8affd1;
+}
+
+/* Tool Page Specifics */
+.tool-header .back-button {
+    display: block;
+    margin-bottom: 1.5rem;
+    color: #00ff9b;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.tool-container {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+/* Forms inside Tools */
+.tool-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tool-container label {
+    font-weight: bold;
+}
+
+.tool-container input[type="text"],
+.tool-container input[type="number"] {
+    background-color: #252525;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    padding: 0.7rem;
+    border-radius: 5px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.small-input {
+    width: 100px;
+}
+
+.results-box {
+    margin-top: 2rem;
+    background-color: #000;
+    border: 1px dashed #333;
+    padding: 1rem;
+    min-height: 100px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #333;
+    color: #777;
+}
+
+
+/* =========================================
+   2. LOGIN PAGE SPECIFIC STYLES
+   ========================================= */
+
+/* Specific body style for login page only to override the general body */
+body.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(120deg, #0f4c3a, #13856c);
+    font-family: 'Segoe UI', sans-serif; /* Login uses a softer font */
+}
+
+/* Theme Toggle Button */
+#theme-toggle {
+    position: absolute; top: 20px; right: 20px; cursor: pointer;
+    font-size: 22px; background: none; border: none; color: #fff;
+}
+
+/* Login Card Container */
+.card-container {
+    width: 400px; 
+    background: #0a1f14; 
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); 
+    overflow: hidden;
+    color: white; 
+    margin: auto;
+}
+
+.tab-container { display: flex; }
+.tab { flex: 1; text-align: center; padding: 18px 0; cursor: pointer; font-weight: bold; color: #fff; background: #0f4c3a; }
+.tab.active { background: #27ae60; }
+.form-container { padding: 30px; }
+
+/* Login Forms */
+.form-container form { display: none; flex-direction: column; animation: fadeIn 0.5s; gap: 0; }
+.form-container form.active { display: flex; }
+
+.input-wrapper { position: relative; margin-bottom: 15px; }
+.input-wrapper .icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 18px; color: #27ae60;
+}
+
+.input-wrapper input {
+    width: 100%; padding: 12px 12px 12px 40px; border-radius: 8px; border: none;
+    background: #0f3a29; color: #e6f2ef;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.toggle-password {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    cursor: pointer; color: #e6f2ef;
+}
+
+.form-footer { text-align: center; margin-top: 15px; font-size: 0.9rem; }
+.form-footer a { color: #27ae60; text-decoration: none; }
+
+.password-requirements { margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; }
+.password-requirements p { font-size: 12px; color: #888; margin: 2px 0; }
+.password-requirements p.valid { color: #27ae60; }
+.password-requirements p::before { content: "✖ "; }
+.password-requirements p.valid::before { content: "✔ "; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }

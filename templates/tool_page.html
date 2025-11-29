@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vulnerability.name }} Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="tool-header">
+            <a href="{{ url_for('dashboard') }}" class="back-button">&larr; Back to Dashboard</a>
+            <h1>{{ vulnerability.name }}</h1>
+            <p>{{ vulnerability.description }}</p>
+        </header>
+
+        <main class="tool-container">
+
+            {# 1. CSRF Scanner #}
+            {% if vuln_id == 'csrf_scanner' %}
+                <form action="{{ url_for('scan_csrf') }}" method="POST">
+                    <label for="url-input">URL to Scan:</label>
+                    <input type="text" id="url-input" name="url" placeholder="https://example.com" required>
+                    <button type="submit" class="button">Scan for CSRF</button>
+                </form>
+
+            {# 2. IDOR Scanner #}
+            {% elif vuln_id == 'idor_scanner' %}
+                <form action="{{ url_for('scan_idor_route') }}" method="POST">
+                    <label for="url-template-input">URL Template (use {id} as placeholder):</label>
+                    <input type="text" id="url-template-input" name="url_template" placeholder="http://testphp.vulnweb.com/artists.php?artist={id}" required>
+                    <label for="start-id">Start ID:</label>
+                    <input type="number" id="start-id" name="start_id" value="1" class="small-input">
+                    <label for="end-id">End ID:</label>
+                    <input type="number" id="end-id" name="end_id" value="5" class="small-input">
+                    <button type="submit" class="button">Scan for IDOR</button>
+                </form>
+
+            {# 3. SQL Injection Scanner #}
+            {% elif vuln_id == 'sqli_scanner' %}
+                <form action="{{ url_for('scan_sqli') }}" method="POST">
+                    <label for="sqli-url">Target URL (must have parameters):</label>
+                    <input type="text" id="sqli-url" name="url" placeholder="http://testphp.vulnweb.com/artists.php?artist=1" required>
+                    <p style="font-size: 0.8rem; color: #888; margin-top: -10px;">Note: The URL must contain a parameter like ?id=1 or ?cat=2</p>
+                    <button type="submit" class="button" style="background-color: #ff4d4d;">Launch SQLi Scan</button>
+                </form>
+
+            {# 4. Advanced XSS Scanner #}
+            {% elif vuln_id == 'xss_advanced' %}
+                <form action="{{ url_for('scan_xss_adv_route') }}" method="POST">
+                    <label for="url">Target URL:</label>
+                    <input type="text" id="url" name="url" placeholder="http://testphp.vulnweb.com/search.php?test=query" required>
+
+                    <label for="params">Parameters (Optional):</label>
+                    <input type="text" id="params" name="params" placeholder="Leave empty to auto-discover parameters">
+
+                    <label for="methods">HTTP Methods:</label>
+                    <input type="text" id="methods" name="methods" value="GET,POST">
+
+                    <div style="display: flex; gap: 1rem; margin-top: 10px;">
+                        <div>
+                            <label for="timeout">Timeout (s):</label>
+                            <input type="number" id="timeout" name="timeout" value="10" class="small-input">
+                        </div>
+                        <div>
+                            <label for="threads">Threads:</label>
+                            <input type="number" id="threads" name="threads" value="8" class="small-input">
+                        </div>
+                    </div>
+
+                    <label style="margin-top: 15px; cursor: pointer;">
+                        <input type="checkbox" name="crawl" checked> 
+                        Crawl & Test Forms found on the page
+                    </label>
+
+                    <button type="submit" class="button" style="background-color: #ffb86b; color: #121212; margin-top: 15px;">Launch XSS Scan</button>
+                </form>
+
+            {# 5. Subdomain Scanner #}
+            {% elif vuln_id == 'subdomain_scanner' %}
+                <form action="{{ url_for('scan_subdomains_route') }}" method="POST">
+                    <label for="domain">Target Domain:</label>
+                    <input type="text" id="domain" name="domain" placeholder="example.com" required>
+                    <p style="font-size: 0.8rem; color: #888; margin-top: -10px;">Enter a root domain (e.g., indrive.com, facebook.com)</p>
+                    
+                    <button type="submit" class="button" style="background-color: #00bfff; color: #121212; margin-top: 15px;">Enumerate Subdomains</button>
+                </form>
+
+            {# Fallback #}
+            {% else %}
+                <p>Tool for <strong>{{ vulnerability.name }}</strong> is under construction.</p>
+            {% endif %} 
+            </main>
+
+        <footer>
+            <p>Graduation Project &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

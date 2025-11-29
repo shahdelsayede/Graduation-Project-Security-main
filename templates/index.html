@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Vulnerability Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Web Security Vulnerability Lab</h1>
+            <p>A toolkit for demonstrating and testing common web application vulnerabilities.</p>
+        </header>
+
+        <main class="grid-container">
+            {% for id, details in vulnerabilities.items() %}
+            <div class="card">
+                <h2>{{ details.name }}</h2>
+                <p>{{ details.description }}</p>
+                <a href="{{ url_for('tool_page', vulnerability_id=id) }}" class="button">Launch Tool</a>
+            </div>
+            {% endfor %}
+        </main>
+
+        <footer>
+            <p>Graduation Project &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

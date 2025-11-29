@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Advanced XSS Scan Results</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header class="tool-header">
+      <a href="{{ url_for('tool_page', vulnerability_id='xss_advanced') }}" class="back-button">&larr; Back</a>
+      <h1>Advanced XSS Scan Results</h1>
+      <p><strong>Target:</strong> <em>{{ results.base_url }}</em></p>
+      <p style="font-size: 0.8rem; color: #888;">Token used: {{ results.token }}</p>
+    </header>
+
+    <main class="tool-container">
+      <h3>Summary</h3>
+      <div class="results-box">
+        <p>Discovered parameters: {{ results.discovered_params|join(', ') }}</p>
+        <p>Total tests performed: {{ results.total_tests }}</p>
+        <p>Potential hits: {{ results.hits|length }}</p>
+      </div>
+
+      <h3 style="margin-top:2rem;">Hits (Reflections Detected)</h3>
+      {% if results.hits %}
+        {% for h in results.hits %}
+          <div class="results-box" style="border-color: #ffb86b;">
+            <p><strong>URL:</strong> {{ h.url }}</p>
+            <p><strong>Method:</strong> {{ h.method }} | <strong>Status:</strong> {{ h.status }}</p>
+            <p><strong>Payload:</strong> <code>{{ h.payload }}</code></p>
+            <p><strong>Where seen:</strong>
+              {% if h.analysis.in_script %} <span style="color: #ff4d4d;">IN SCRIPT</span> {% endif %}
+              {% if h.analysis.in_attribute %} <span style="color: #ff4d4d;">IN ATTRIBUTE</span> {% endif %}
+              {% if h.analysis.raw and not (h.analysis.in_script or h.analysis.in_attribute) %} <span style="color: #00ff9b;">HTML CONTEXT</span> {% endif %}
+            </p>
+            <p><strong>Snippet:</strong> <code>{{ h.analysis.snippet }}</code></p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="results-box">
+          <p style="color:#00ff9b;">No reflections detected by token-based tests.</p>
+        </div>
+      {% endif %}
+
+      <h3 style="margin-top:2rem;">Raw Results Log</h3>
+      <div class="results-box" style="font-family:monospace; white-space:pre-wrap; max-height: 300px; overflow-y: scroll;">
+        {% for r in results.all_results %}
+          {{ r }}
+          <hr style="border-color:#333;">
+        {% endfor %}
+      </div>
+    </main>
+
+    <footer>
+      <p>Graduation Project &copy; 2025</p>
+    </footer>
+  </div>
+</body> 
+</html>

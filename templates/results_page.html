@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="tool-header">
+            <a href="{{ url_for('tool_page', vulnerability_id='csrf_scanner') }}" class="back-button">&larr; Scan Another URL</a>
+            <h1>Scan Results for:</h1>
+            <p style="word-wrap: break-word;"><em>{{ results.url }}</em></p>
+        </header>
+
+        <main class="tool-container">
+            {% if results.error %}
+                <div class="results-box" style="border-color: #ff4d4d;">
+                    <p><strong>Error:</strong> {{ results.error }}</p>
+                </div>
+            {% else %}
+                <h3>Forms Found: {{ results.forms|length }}</h3>
+                {% for form in results.forms %}
+                    <div class="results-box">
+                        <p><strong>Form #{{ form.id }}:</strong> action="{{ form.action }}" method="{{ form.method }}"</p>
+                        {% if form.has_token %}
+                            <p style="color: #00ff9b;">&rarr; CSRF token detected: '{{ form.token_name }}'</p>
+                        {% else %}
+                            <p style="color: #ff4d4d;">&rarr; NO obvious CSRF token found (Possible vulnerability)</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <h3 style="margin-top: 2rem;">Security Headers:</h3>
+                <div class="results-box">
+                    {% for header, value in results.headers.items() %}
+                        <p><strong>{{ header }}:</strong> {{ value }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>Graduation Project &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

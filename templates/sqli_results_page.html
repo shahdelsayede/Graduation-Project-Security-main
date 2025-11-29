@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLi Scan Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="tool-header">
+            <a href="{{ url_for('tool_page', vulnerability_id='sqli_scanner') }}" class="back-button">&larr; Scan Again</a>
+            <h1>SQL Injection Report</h1>
+            <p style="word-wrap: break-word;">Target: <em>{{ url }}</em></p>
+        </header>
+
+        <main class="tool-container">
+            {% if findings|length == 0 %}
+                <div class="results-box">
+                    <p style="color: #00ff9b;">&rarr; No obvious vulnerabilities found with current payloads.</p>
+                </div>
+            {% else %}
+                <h3>Potential Vulnerabilities Found: {{ findings|length }}</h3>
+                
+                {% for item in findings %}
+                <div class="results-box">
+                    {% if item.type == 'INFO' or item.type == 'ERROR' %}
+                        <p>{{ item.evidence }}</p>
+                    {% else %}
+                        <p><strong style="color: #ff4d4d;">[{{ item.type }}]</strong> found on parameter: <strong>{{ item.parameter }}</strong></p>
+                        <p>Payload used: <code>{{ item.payload }}</code></p>
+                        <p>Evidence: {{ item.evidence }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>Graduation Project &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

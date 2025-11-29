@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Security Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <button id="theme-toggle">🌙</button>
+
+    <div class="card-container">
+        <div class="tab-container">
+            <div class="tab active" id="login-tab">Login</div>
+            <div class="tab" id="signup-tab">Signup</div>
+        </div>
+
+        <div class="form-container">
+            <form id="login-form" class="active">
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope icon"></i>
+                    <input type="email" id="login-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <i class="fas fa-eye toggle-password" data-target="login-password"></i>
+                </div>
+                <div class="remember">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <button type="submit">Login</button>
+                <div class="form-footer">
+                    Don't have an account? <a href="#" id="switch-to-signup">Signup</a>
+                </div>
+            </form>
+
+            <form id="signup-form">
+                <div class="input-wrapper">
+                    <i class="fas fa-user icon"></i>
+                    <input type="text" id="signup-name" placeholder="Full Name" required>
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope icon"></i>
+                    <input type="email" id="signup-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" id="signup-password" placeholder="Create Password" required>
+                    <i class="fas fa-eye toggle-password" data-target="signup-password"></i>
+                </div>
+                
+                <div class="password-requirements">
+                    <p id="req-length">At least 8 characters</p>
+                    <p id="req-uppercase">At least one uppercase letter</p>
+                    <p id="req-number">At least one number</p>
+                    <p id="req-symbol">At least one symbol (!@#$)</p>
+                </div>
+
+                <div class="input-wrapper">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" id="signup-confirm" placeholder="Confirm Password" required>
+                </div>
+
+                <button type="submit">Create Account</button>
+                <div class="form-footer">
+                    Already have an account? <a href="#" id="switch-to-login">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Tab Switching Logic ---
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        function switchTab(isLogin) {
+            if(isLogin) {
+                loginTab.classList.add('active'); signupTab.classList.remove('active');
+                loginForm.classList.add('active'); signupForm.classList.remove('active');
+            } else {
+                signupTab.classList.add('active'); loginTab.classList.remove('active');
+                signupForm.classList.add('active'); loginForm.classList.remove('active');
+            }
+        }
+        loginTab.addEventListener('click', () => switchTab(true));
+        signupTab.addEventListener('click', () => switchTab(false));
+        document.getElementById('switch-to-signup').addEventListener('click', (e) => { e.preventDefault(); switchTab(false); });
+        document.getElementById('switch-to-login').addEventListener('click', (e) => { e.preventDefault(); switchTab(true); });
+
+        // --- Password Toggle ---
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                input.type = input.type === 'password' ? 'text' : 'password';
+                btn.classList.toggle('fa-eye');
+                btn.classList.toggle('fa-eye-slash');
+            });
+        });
+
+        // --- Signup Logic (Local Storage) ---
+        const passwordInput = document.getElementById('signup-password');
+        const reqLength = document.getElementById('req-length');
+        const reqUppercase = document.getElementById('req-uppercase');
+        const reqNumber = document.getElementById('req-number');
+        const reqSymbol = document.getElementById('req-symbol');
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+            reqLength.classList.toggle('valid', val.length>=8);
+            reqUppercase.classList.toggle('valid', /[A-Z]/.test(val));
+            reqNumber.classList.toggle('valid', /\d/.test(val));
+            reqSymbol.classList.toggle('valid', /[!@#$%^&*(),.?":{}|<>]/.test(val));
+        });
+
+        signupForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = passwordInput.value;
+            const confirm = document.getElementById('signup-confirm').value;
+
+            // Simple validation check
+            if(!document.querySelector('.password-requirements p:not(.valid)')) {
+                 if(password !== confirm){ alert('Passwords do not match!'); return; }
+                 
+                 let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+                 if(accounts.find(a => a.email===email)){ alert('Email already exists!'); return; }
+                 
+                 accounts.push({name,email,password});
+                 localStorage.setItem('accounts', JSON.stringify(accounts));
+                 alert('Account Created! Please Login.');
+                 switchTab(true); // Switch to login tab
+                 signupForm.reset();
+            } else {
+                alert("Please meet all password requirements.");
+            }
+        });
+
+        // --- LOGIN LOGIC (REDIRECTS TO DASHBOARD) ---
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            
+            // For testing purposes, we also allow a default admin/admin login
+            const user = accounts.find(a => a.email===email && a.password===password);
+            
+            if(user || (email === "admin@test.com" && password === "admin")) {
+                // REDIRECT TO FLASK DASHBOARD ROUTE
+                window.location.href = "{{ url_for('dashboard') }}";
+            } else {
+                alert('Invalid email or password! (Try signing up first)');
+            }
+        });
+        
+        // --- Theme Toggle ---
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        });
+    </script>
+</body>
+</html>
